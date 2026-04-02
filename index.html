@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Projection — Tech Doc Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090e;
+  --surface: #0d1117;
+  --surface2: #131923;
+  --surface3: #1a2232;
+  --border: #1c2840;
+  --border2: #253450;
+  --accent: #e8401a;
+  --accent2: #ff6b3d;
+  --blue: #4d8fff;
+  --text: #b8c8e0;
+  --text-dim: #4a607a;
+  --text-bright: #eaf0fc;
+  --green: #2ec48a;
+  --yellow: #f5b940;
+  --purple: #9b7fe8;
+  --teal: #40d4c8;
+  --orange: #ff9640;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(180deg,#0a0f18 0%,var(--surface) 100%);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+}
+.logo-img{height:32px;object-fit:contain;filter:brightness(1.05)}
+.header-right{display:flex;align-items:center;gap:1rem}
+.header-badge{
+  font-family:'JetBrains Mono',monospace;font-size:0.62rem;
+  color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;
+}
+.btn-admin{
+  display:flex;align-items:center;gap:0.4rem;
+  padding:0.45rem 0.9rem;
+  background:rgba(232,64,26,0.1);
+  border:1px solid rgba(232,64,26,0.3);
+  border-radius:5px;
+  color:var(--accent2);
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-admin:hover{background:rgba(232,64,26,0.2);border-color:var(--accent)}
+.btn-admin svg{width:14px;height:14px}
+
+/* ── SEARCH ZONE ── */
+.search-zone{
+  background:linear-gradient(180deg,rgba(13,17,23,0.95) 0%,transparent 100%);
+  padding:1.25rem 2rem 1rem;
+  position:sticky;top:62px;z-index:100;
+  border-bottom:1px solid rgba(28,40,64,0.5);
+}
+.search-inner{max-width:1000px;margin:0 auto;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap}
+.search-wrap{
+  flex:1;min-width:240px;
+  display:flex;align-items:center;gap:0.6rem;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:6px;padding:0 0.9rem;transition:border-color 0.2s;
+}
+.search-wrap:focus-within{border-color:rgba(232,64,26,0.5)}
+.search-wrap svg{color:var(--text-dim);flex-shrink:0}
+.search-wrap input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text-bright);font-family:'Barlow',sans-serif;font-size:0.88rem;
+  padding:0.7rem 0;
+}
+.search-wrap input::placeholder{color:var(--text-dim)}
+.filter-chips{display:flex;gap:0.4rem;flex-wrap:wrap}
+.chip{
+  padding:0.38rem 0.8rem;background:var(--surface2);
+  border:1px solid var(--border);border-radius:20px;
+  color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;
+  font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;
+  cursor:pointer;transition:all 0.15s;white-space:nowrap;
+}
+.chip:hover{border-color:var(--border2);color:var(--text)}
+.chip.active{border-color:var(--accent);color:var(--accent2);background:rgba(232,64,26,0.08)}
+
+/* ── LAYOUT ── */
+.layout{display:flex;max-width:1380px;margin:0 auto;padding:1rem 2rem 3rem;gap:1.5rem}
+
+/* ── SIDEBAR ── */
+aside{width:230px;flex-shrink:0;padding-top:0.25rem}
+.sb-section{margin-bottom:1.5rem}
+.sb-label{
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);
+  padding:0 0.6rem;margin-bottom:0.4rem;
+}
+.sb-btn{
+  display:flex;align-items:center;gap:0.55rem;width:100%;
+  padding:0.55rem 0.7rem;background:none;border:none;border-radius:5px;
+  color:var(--text);font-family:'Barlow',sans-serif;font-size:0.84rem;
+  cursor:pointer;text-align:left;transition:all 0.12s;position:relative;
+}
+.sb-btn:hover{background:var(--surface2);color:var(--text-bright)}
+.sb-btn.active{background:rgba(232,64,26,0.1);color:var(--accent2)}
+.sb-btn.active::before{
+  content:'';position:absolute;left:0;top:20%;height:60%;
+  width:2px;background:var(--accent);border-radius:0 2px 2px 0;
+}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text-dim)}
+.sb-dtype{
+  display:flex;align-items:center;gap:0.5rem;width:100%;
+  padding:0.42rem 0.7rem;background:none;border:none;border-radius:4px;
+  color:var(--text-dim);font-family:'Barlow',sans-serif;font-size:0.8rem;
+  cursor:pointer;text-align:left;transition:all 0.12s;
+}
+.sb-dtype:hover{color:var(--text);background:var(--surface2)}
+.sb-dtype.active{color:var(--yellow)}
+.sb-dtype .di{font-size:0.8rem;width:15px;text-align:center;flex-shrink:0}
+
+/* ── MAIN ── */
+main{flex:1;min-width:0}
+.results-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.4rem 0 0.8rem;
+}
+.results-txt{font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;color:var(--text-dim);letter-spacing:0.04em}
+.results-txt strong{color:var(--text-bright);font-weight:600}
+
+/* ── PRODUCT CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;margin-bottom:6px;overflow:hidden;transition:border-color 0.2s;
+}
+.card:hover{border-color:var(--border2)}
+.card-head{
+  display:flex;align-items:center;gap:0.9rem;
+  padding:0.9rem 1.1rem;cursor:pointer;user-select:none;
+}
+.card-badge{
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.07em;padding:0.18rem 0.5rem;border-radius:3px;
+  text-transform:uppercase;flex-shrink:0;
+}
+.card-name{
+  flex:1;font-family:'Barlow Condensed',sans-serif;font-size:1.02rem;
+  font-weight:600;letter-spacing:0.04em;color:var(--text-bright);
+}
+.card-pn{font-family:'JetBrains Mono',monospace;font-size:0.64rem;color:var(--text-dim)}
+.chevron{color:var(--text-dim);font-size:0.7rem;transition:transform 0.2s;flex-shrink:0}
+.card.open .chevron{transform:rotate(90deg)}
+
+.doc-grid{
+  display:none;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:4px;padding:4px 1.1rem 1.1rem;border-top:1px solid var(--border);
+}
+.card.open .doc-grid{display:grid}
+
+.doc-tile{
+  display:flex;flex-direction:column;gap:0.28rem;
+  padding:0.65rem 0.8rem;background:var(--surface2);
+  border:1px solid var(--border);border-radius:5px;
+  cursor:pointer;transition:all 0.12s;position:relative;overflow:hidden;
+}
+.doc-tile::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  opacity:0;transition:opacity 0.15s;
+}
+.doc-tile:hover{border-color:var(--border2);background:var(--surface3)}
+.doc-tile:hover::before{opacity:1}
+.dt-icon{font-size:1rem;line-height:1}
+.dt-label{font-family:'Barlow Condensed',sans-serif;font-size:0.76rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-bright)}
+.dt-path{font-family:'JetBrains Mono',monospace;font-size:0.56rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.doc-tile[data-t="firmware"]::before{background:var(--green)}
+.doc-tile[data-t="service_manual"]::before{background:var(--accent)}
+.doc-tile[data-t="user_manual"]::before{background:var(--blue)}
+.doc-tile[data-t="comm_protocol"]::before{background:var(--purple)}
+.doc-tile[data-t="drawings"]::before{background:var(--yellow)}
+.doc-tile[data-t="parts_list"]::before{background:var(--text-dim)}
+.doc-tile[data-t="tech_bulletins"]::before{background:var(--orange)}
+.doc-tile[data-t="lenses"]::before{background:var(--teal)}
+
+/* ── BADGE COLORS ── */
+.b-ev{background:rgba(77,143,255,.12);color:#4d8fff}
+.b-mv{background:rgba(46,196,138,.12);color:var(--green)}
+.b-tl{background:rgba(232,64,26,.12);color:var(--accent2)}
+.b-mir{background:rgba(155,127,232,.12);color:var(--purple)}
+.b-sat{background:rgba(245,185,64,.12);color:var(--yellow)}
+.b-cus{background:rgba(64,212,200,.12);color:var(--teal)}
+.d-ev{background:#4d8fff}
+.d-mv{background:var(--green)}
+.d-tl{background:var(--accent2)}
+.d-mir{background:var(--purple)}
+.d-sat{background:var(--yellow)}
+.d-cus{background:var(--teal)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:4rem 2rem;color:var(--text-dim)}
+.empty-icon{font-size:2rem;margin-bottom:0.75rem;opacity:0.3}
+.empty-txt{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;letter-spacing:0.05em}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;
+  background:var(--surface3);border:1px solid var(--green);
+  color:var(--green);padding:0.55rem 1.1rem;border-radius:5px;
+  font-family:'JetBrains Mono',monospace;font-size:0.72rem;
+  opacity:0;transform:translateY(8px);transition:all 0.2s;pointer-events:none;
+}
+.toast.on{opacity:1;transform:translateY(0)}
+
+/* ── MODAL OVERLAY ── */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  z-index:500;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.overlay.on{opacity:1;pointer-events:all}
+
+/* ── ADMIN PANEL ── */
+.panel{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:10px;width:min(700px,95vw);max-height:90vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+  transform:translateY(20px);transition:transform 0.2s;
+}
+.overlay.on .panel{transform:translateY(0)}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem 1rem;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--surface);z-index:1;
+}
+.panel-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:1.1rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-bright);
+}
+.panel-close{
+  background:none;border:1px solid var(--border);border-radius:4px;
+  color:var(--text-dim);cursor:pointer;padding:0.3rem 0.5rem;font-size:0.9rem;
+  transition:all 0.15s;
+}
+.panel-close:hover{border-color:var(--accent);color:var(--accent)}
+.panel-body{padding:1.25rem 1.5rem}
+.panel-tabs{display:flex;gap:0.3rem;margin-bottom:1.25rem}
+.ptab{
+  padding:0.45rem 1rem;background:none;border:1px solid var(--border);
+  border-radius:5px;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;
+  font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;
+  cursor:pointer;transition:all 0.15s;
+}
+.ptab:hover{color:var(--text);border-color:var(--border2)}
+.ptab.active{border-color:var(--accent);color:var(--accent2);background:rgba(232,64,26,0.08)}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.form-grid.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:0.35rem}
+.form-group label{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim)}
+.form-group input,.form-group select{
+  background:var(--surface2);border:1px solid var(--border);border-radius:5px;
+  color:var(--text-bright);font-family:'Barlow',sans-serif;font-size:0.85rem;
+  padding:0.6rem 0.8rem;outline:none;transition:border-color 0.15s;width:100%;
+}
+.form-group input:focus,.form-group select:focus{border-color:rgba(232,64,26,0.5)}
+.form-group select{cursor:pointer}
+option{background:var(--surface2)}
+.form-section{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:6px;padding:0.9rem;margin-top:0.75rem;
+}
+.form-section-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);
+  margin-bottom:0.65rem;display:flex;align-items:center;gap:0.5rem;
+}
+.form-section-title span{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.form-actions{display:flex;gap:0.6rem;justify-content:flex-end;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+.btn-primary{
+  padding:0.6rem 1.4rem;background:var(--accent);border:none;border-radius:5px;
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;
+  letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.15s;
+}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{
+  padding:0.6rem 1.2rem;background:none;border:1px solid var(--border2);border-radius:5px;
+  color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;
+  letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.15s;
+}
+.btn-secondary:hover{border-color:var(--text-dim);color:var(--text-bright)}
+.btn-danger{
+  padding:0.45rem 0.9rem;background:none;border:1px solid rgba(232,64,26,0.3);border-radius:4px;
+  color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.68rem;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-danger:hover{background:rgba(232,64,26,0.1)}
+
+/* ── PRODUCT LIST IN ADMIN ── */
+.product-list{display:flex;flex-direction:column;gap:4px}
+.product-item{
+  display:flex;align-items:center;gap:0.75rem;
+  padding:0.7rem 0.9rem;background:var(--surface2);
+  border:1px solid var(--border);border-radius:5px;
+}
+.product-item-name{flex:1;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:600;color:var(--text-bright)}
+.product-item-series{font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text-dim)}
+.product-item-actions{display:flex;gap:0.4rem;flex-shrink:0}
+.btn-edit{
+  padding:0.3rem 0.6rem;background:none;border:1px solid var(--border2);border-radius:4px;
+  color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:0.65rem;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-edit:hover{border-color:var(--blue);color:var(--blue)}
+
+/* ── IO TAB ── */
+.io-section{margin-bottom:1.25rem}
+.io-title{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-bright);margin-bottom:0.6rem}
+.io-desc{font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;line-height:1.5}
+.btn-io{
+  padding:0.6rem 1.2rem;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:5px;color:var(--text);font-family:'Barlow Condensed',sans-serif;
+  font-size:0.82rem;letter-spacing:0.07em;text-transform:uppercase;
+  cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:0.5rem;
+}
+.btn-io:hover{border-color:var(--accent);color:var(--accent2)}
+.file-input-wrap{position:relative;display:inline-block}
+.file-input-wrap input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+@media(max-width:720px){
+  aside{display:none}
+  .layout{padding:0.5rem 1rem 2rem}
+  .form-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="data:image/png;base64,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" class="logo-img" alt="Digital Projection">
+  <div class="header-right">
+    <span class="header-badge">Documentation Hub</span>
+    <button class="btn-admin" onclick="openAdmin()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 0 4.93 19.07M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+      Gestion
+    </button>
+  </div>
+</header>
+
+<div class="search-zone">
+  <div class="search-inner">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="q" placeholder="Rechercher un modèle, numéro de pièce…" autocomplete="off" oninput="render()">
+    </div>
+    <div class="filter-chips" id="seriesChips"></div>
+  </div>
+</div>
+
+<div class="layout">
+  <aside>
+    <div class="sb-section">
+      <div class="sb-label">Gammes</div>
+      <div id="sbSeries"></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Type de document</div>
+      <div id="sbTypes"></div>
+    </div>
+  </aside>
+  <main>
+    <div class="results-bar">
+      <div class="results-txt"><strong id="rcount">0</strong> produit(s)</div>
+    </div>
+    <div id="grid"></div>
+    <div class="empty" id="empty" style="display:none">
+      <div class="empty-icon">⊘</div>
+      <div class="empty-txt">Aucun produit trouvé</div>
+    </div>
+  </main>
+</div>
+
+<!-- Admin overlay -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="panel" id="panel" onclick="event.stopPropagation()">
+    <div class="panel-head">
+      <div class="panel-title">Gestion des produits</div>
+      <button class="panel-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="panel-tabs">
+        <button class="ptab active" onclick="switchTab('list',this)">Liste</button>
+        <button class="ptab" onclick="switchTab('add',this)">Ajouter</button>
+        <button class="ptab" onclick="switchTab('io',this)">Export / Import</button>
+      </div>
+      <div id="tabList"></div>
+      <div id="tabAdd" style="display:none"></div>
+      <div id="tabIo" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const BASE_DATA = {"E-Vision Projectors":[{"name":"E-Vision Laser 5100 WUXGA","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\User Manuals","service_manual":"\\\\ukmanfp02\\Development\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\Technical Service Bulletins","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\Command Protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\Lenses Drawings and Information","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5100 WU - Short Throw lens\\CAD Drawings & Models"},"part_number":"120-552"},{"name":"E-Vision Laser 5900 WUXGA","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\Technical Service Bulletins","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\Command Protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\Lenses Drawings and Information","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 5900 WU - STD lens\\CAD Drawings & Models"},"part_number":"120-551"},{"name":"E-Vision Laser 6500 II","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 6500 II rev B - 6 bank\\Spare Parts","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 6500 II rev B - 6 bank\\User manual","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 6500 II rev B - 6 bank\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 6500 II rev B - 6 bank\\Firmware","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 6500 II rev B - 6 bank\\Command protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 6500 II rev B - 6 bank\\Lenses","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 6500 II rev B - 6 bank\\CAD Drawing"},"part_number":"119-076"},{"name":"E-Vision Laser 9000 WU","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\User Manual 120-262","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\Technical Service Bulletins","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\Command Protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 9000 WU  the  LOB1 8100lm - 8 bank\\CAD Drawings & Models"},"part_number":"120-481"},{"name":"E-Vision 8500","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\Spare parts list","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\User Manual - 117-919","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\Technical Service Bulletins","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\Protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\Lens extensions","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 8500\\CAD Drawings"},"part_number":"119-024"},{"name":"E-Vision 9100 WU","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 9100 WU - LOB1 in LOB2 chassis - motorised LM\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 9100 WU - LOB1 in LOB2 chassis - motorised LM\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 9100 WU - LOB1 in LOB2 chassis - motorised LM\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 9100 WU - LOB1 in LOB2 chassis - motorised LM\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 9100 WU - LOB1 in LOB2 chassis - motorised LM\\Technical Service Bulletins","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 9100 WU - LOB1 in LOB2 chassis - motorised LM\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 9100 WU - LOB1 in LOB2 chassis - motorised LM\\CAD Drawings & Models"},"part_number":"120-976"},{"name":"E-Vision Laser 4K-UHD","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 4K\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 4K\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 4K\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 4K\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 4K\\Service bulletins","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 4K\\Protocol from spec - E-Vision 4K specification 20170317","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 4K\\CAD Drawings & Models"},"part_number":"118-150 HB, 118-151 HC"},{"name":"E-Vision Laser 10K","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 10K\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 10K\\User Manual - 117-919","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 10K\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 10K\\Firmware","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 10K\\DP protocol guide","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 10K\\Lens Drawings","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 10K\\CAD Drawings & Models"},"part_number":"119-028"},{"name":"E-Vision Laser 11000 4K-UHD","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 11000-4K-UHD\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 11000-4K-UHD\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 11000-4K-UHD\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 11000-4K-UHD\\Firmware","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 11000-4K-UHD\\Command protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 11000-4K-UHD\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 11000-4K-UHD\\CAD Drawings & Models"},"part_number":"119-735"},{"name":"E-VISION LASER 13000 WU","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 13000-WU  has RLA\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 13000-WU  has RLA\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 13000-WU  has RLA\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 13000 WU - new with MCL\\Firmware","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 13000 WU - new with MCL\\Command Protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 13000 WU - new with MCL\\Lens info","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 13000-WU  has RLA\\CAD Drawings & Models"},"part_number":"119-734"},{"name":"E-VISION LASER 15000 WU","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\User Manual 121-000","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\Firmware\\FW Latest DP release","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\Technical Service Bulletins","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\Command Protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\Lens Drawings and Info\\E-Vision Lenses  H6T .xlsx","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision Laser 15000 WU\\CAD Drawings & Models"},"part_number":"120-994"},{"name":"E-Vision 4000 4K-UHD","series":"E-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\Parts List","user_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\User Manual EN 121-815","service_manual":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\Service Manual","firmware":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\Firmware\\FW Latest DP release","tech_bulletins":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\Technical Service Bulletins","comm_protocol":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\Command protocol","lenses":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\E-Vision\\E-Vision Laser series\\E-Vision 4000 4K-UHD\\CAD Drawings & Models"},"part_number":"121-804"}],"M-Vision Projectors":[{"name":"M-Vision Laser 18K WUXGA","series":"M-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\SPARE PARTS PRICES","user_manual":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\User Manual","service_manual":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\Service Manual","firmware":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\Issues","comm_protocol":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\PROTOCOL","lenses":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\Lenses","drawings":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\CAD Drawings & Models"},"part_number":"118-053"},{"name":"M-Vision Laser 21K WUXGA","series":"M-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 21000 WU\\Service Spare Parts","user_manual":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 21000 WU\\User Manual","service_manual":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 21000 WU\\Service Manual","firmware":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 21000 WU\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 21000 WU\\Issues","comm_protocol":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 21000 WU\\PROTOCOL","lenses":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\Lenses","drawings":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 21000 WU\\CAD Drawings & Models"},"part_number":"119-673"},{"name":"M-Vision Laser 23K WUXGA","series":"M-Vision Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 23000 WU\\Service Spare Parts","user_manual":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 23000 WU\\User Manual","service_manual":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 23000 WU\\Service Manual","firmware":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 23000 WU\\Firmware","tech_bulletins":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 23000 WU\\Issues","lenses":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 18000 WU\\Lenses","drawings":"Z:\\OEM Product Documentation\\M-Vision\\M-Vision Laser 23000 WU\\CAD Drawings & Models"},"part_number":"121-083"}],"Titan Laser Projectors":[{"name":"Titan Laser 26000 4K-UHD","series":"Titan Laser Projectors","docs":{"user_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Service Manual","firmware":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Firmware - Software","tech_bulletins":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\ISSUES","comm_protocol":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Protocol for Projector controller development ONLY","lenses":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\CAD Drawings & Models"},"part_number":"119-838"},{"name":"Titan Laser 29000 WU","series":"Titan Laser Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Service Spares","user_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Service Manual","firmware":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Firmware - Software","tech_bulletins":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\ISSUES","comm_protocol":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Protocol for Projector controller development ONLY","lenses":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\CAD Drawings & Models"},"part_number":"119-837"},{"name":"Titan Laser 33000 4K-UHD","series":"Titan Laser Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Service Spares","user_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Service Manual","firmware":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Firmware - Software","tech_bulletins":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\ISSUES","comm_protocol":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Protocol for Projector controller development ONLY","lenses":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\CAD Drawings & Models"},"part_number":"119-705"},{"name":"Titan Laser 37000 WU","series":"Titan Laser Projectors","docs":{"parts_list":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Service Spares","user_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\User Manuals","service_manual":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Service Manual","firmware":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Firmware - Software","tech_bulletins":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\ISSUES","comm_protocol":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Protocol for Projector controller development ONLY","lenses":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\Lens Drawings and Info","drawings":"Z:\\OEM Product Documentation\\Titan Laser\\Titan Laser 37000 series\\CAD Drawings & Models"},"part_number":"119-704"}]};
+
+const DOC_META = {
+  parts_list:    {label:'Parts List',     icon:'≡',  color:'#4a607a'},
+  user_manual:   {label:'User Manual',    icon:'📖', color:'#4d8fff'},
+  service_manual:{label:'Service Manual', icon:'🔧', color:'#e8401a'},
+  firmware:      {label:'Firmware',       icon:'⚙',  color:'#2ec48a'},
+  tech_bulletins:{label:'Tech Bulletins', icon:'⚠',  color:'#ff9640'},
+  comm_protocol: {label:'Comm. Protocol', icon:'⇄',  color:'#9b7fe8'},
+  lenses:        {label:'Lenses Info',    icon:'◎',  color:'#40d4c8'},
+  drawings:      {label:'Plans / CAD',    icon:'⬡',  color:'#f5b940'},
+};
+
+const SERIES_META = {
+  'E-Vision Projectors':    {badge:'b-ev',  dot:'d-ev',  short:'E-Vision',  chip:'EV'},
+  'M-Vision Projectors':    {badge:'b-mv',  dot:'d-mv',  short:'M-Vision',  chip:'MV'},
+  'Titan Laser Projectors': {badge:'b-tl',  dot:'d-tl',  short:'Titan',     chip:'TL'},
+  'Mirage Series':          {badge:'b-mir', dot:'d-mir', short:'Mirage',    chip:'MIR'},
+  'Satellite':              {badge:'b-sat', dot:'d-sat', short:'Satellite', chip:'SAT'},
+  'Personnalisé':           {badge:'b-cus', dot:'d-cus', short:'Custom',    chip:'CUS'},
+};
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let customProducts = [];
+let filterSeries = 'all';
+let filterType   = 'all';
+let editingIdx   = null; // null = new product
+
+// ─── STORAGE ────────────────────────────────────────────────────────────────
+function loadCustom(){
+  try{ customProducts = JSON.parse(localStorage.getItem('dp_custom')||'[]'); }
+  catch(e){ customProducts = []; }
+}
+function saveCustom(){
+  localStorage.setItem('dp_custom', JSON.stringify(customProducts));
+}
+
+// ─── FLATTEN ALL PRODUCTS ───────────────────────────────────────────────────
+function allProducts(){
+  let base = [];
+  Object.values(BASE_DATA).forEach(arr => base = base.concat(arr));
+  return base.concat(customProducts);
+}
+
+function seriesList(){
+  const s = new Set(allProducts().map(p=>p.series));
+  return [...s];
+}
+
+// ─── VALID PATH ─────────────────────────────────────────────────────────────
+function validPath(p){ return p && p.length > 4 && p !== ')' && p !== '0'; }
+
+// ─── RENDER SIDEBAR ─────────────────────────────────────────────────────────
+function renderSidebar(){
+  const all = allProducts();
+  const series = seriesList();
+
+  // Sidebar series
+  const sbS = document.getElementById('sbSeries');
+  sbS.innerHTML = `<button class="sb-btn ${filterSeries==='all'?'active':''}" onclick="setSeries('all',this)">
+    <span class="sb-dot" style="background:var(--text-dim)"></span>Toutes
+    <span class="sb-count">${all.length}</span>
+  </button>`;
+  series.forEach(s=>{
+    const m = SERIES_META[s]||{badge:'b-cus',dot:'d-cus',short:s};
+    const cnt = all.filter(p=>p.series===s).length;
+    sbS.innerHTML += `<button class="sb-btn ${filterSeries===s?'active':''}" onclick="setSeries('${s.replace(/'/g,"\\'")}'  ,this)">
+      <span class="sb-dot ${m.dot}"></span>${m.short}
+      <span class="sb-count">${cnt}</span>
+    </button>`;
+  });
+
+  // Sidebar types
+  const sbT = document.getElementById('sbTypes');
+  sbT.innerHTML = `<button class="sb-dtype ${filterType==='all'?'active':''}" onclick="setType('all',this)">
+    <span class="di">◈</span>Tous types
+  </button>`;
+  Object.entries(DOC_META).forEach(([k,v])=>{
+    sbT.innerHTML += `<button class="sb-dtype ${filterType===k?'active':''}" onclick="setType('${k}',this)">
+      <span class="di">${v.icon}</span>${v.label}
+    </button>`;
+  });
+
+  // Header chips
+  const chips = document.getElementById('seriesChips');
+  chips.innerHTML = `<button class="chip ${filterSeries==='all'?'active':''}" onclick="setSeries('all',null)">Tous</button>`;
+  series.forEach(s=>{
+    const m = SERIES_META[s]||{chip:s};
+    chips.innerHTML += `<button class="chip ${filterSeries===s?'active':''}" onclick="setSeries('${s.replace(/'/g,"\\'")}'  ,null)">${m.short||s}</button>`;
+  });
+}
+
+// ─── RENDER CARDS ───────────────────────────────────────────────────────────
+function render(){
+  renderSidebar();
+  const q = document.getElementById('q').value.toLowerCase().trim();
+  const prods = allProducts().filter(p=>{
+    if(filterSeries !== 'all' && p.series !== filterSeries) return false;
+    if(q && !p.name.toLowerCase().includes(q) && !(p.part_number||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  document.getElementById('rcount').textContent = prods.length;
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
+
+  if(!prods.length){ grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  grid.innerHTML = prods.map(p=>{
+    const m = SERIES_META[p.series]||{badge:'b-cus',short:p.series};
+    const tiles = Object.entries(p.docs||{})
+      .filter(([k,v])=>{
+        if(!validPath(v)) return false;
+        if(filterType !== 'all' && k !== filterType) return false;
+        return DOC_META[k];
+      })
+      .map(([k,v])=>{
+        const dm = DOC_META[k];
+        const shortPath = v.split('\\').filter(Boolean).slice(-2).join(' › ') ||
+                          v.split('\').filter(Boolean).slice(-2).join(' › ');
+        return `<div class="doc-tile" data-t="${k}" onclick="copyPath(\`${v.replace(/`/g,'\\`')}\`)">
+          <div class="dt-icon">${dm.icon}</div>
+          <div class="dt-label">${dm.label}</div>
+          <div class="dt-path" title="${v.replace(/"/g,'&quot;')}">${shortPath||v}</div>
+        </div>`;
+      }).join('');
+    if(!tiles && filterType!=='all') return '';
+    return `<div class="card">
+      <div class="card-head" onclick="toggleCard(this)">
+        <span class="card-badge ${m.badge}">${m.short}</span>
+        <span class="card-name">${p.name}</span>
+        ${p.part_number?`<span class="card-pn">PN: ${p.part_number}</span>`:''}
+        <span class="chevron">▶</span>
+      </div>
+      <div class="doc-grid">${tiles}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(h){ h.closest('.card').classList.toggle('open'); }
+
+function setSeries(s, btn){
+  filterSeries = s;
+  render();
+}
+function setType(t, btn){
+  filterType = t;
+  render();
+}
+
+// ─── COPY PATH ──────────────────────────────────────────────────────────────
+function copyPath(p){
+  navigator.clipboard.writeText(p).then(()=>toast('✓ Chemin copié dans le presse-papier'));
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'), 2200);
+}
+
+// ─── ADMIN PANEL ────────────────────────────────────────────────────────────
+function openAdmin(){ document.getElementById('overlay').classList.add('on'); renderTabList(); }
+function closeAdmin(){ document.getElementById('overlay').classList.remove('on'); editingIdx=null; }
+function overlayClick(e){ if(e.target===document.getElementById('overlay')) closeAdmin(); }
+
+let currentTab = 'list';
+function switchTab(tab, btn){
+  currentTab = tab;
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tabList').style.display = tab==='list'?'':'none';
+  document.getElementById('tabAdd').style.display  = tab==='add' ?'':'none';
+  document.getElementById('tabIo').style.display   = tab==='io'  ?'':'none';
+  if(tab==='list') renderTabList();
+  if(tab==='add')  renderTabAdd();
+  if(tab==='io')   renderTabIo();
+}
+
+// ── LIST TAB ──
+function renderTabList(){
+  const el = document.getElementById('tabList');
+  const all = allProducts();
+  if(!all.length){ el.innerHTML='<p style="color:var(--text-dim);font-size:0.85rem;padding:1rem 0">Aucun produit.</p>'; return; }
+
+  // Group custom products by index
+  el.innerHTML = `<div class="product-list">${all.map((p,i)=>{
+    const m = SERIES_META[p.series]||{badge:'b-cus',short:p.series};
+    const isCustom = i >= (all.length - customProducts.length);
+    const customIdx = isCustom ? i - (all.length - customProducts.length) : -1;
+    const docCount = Object.values(p.docs||{}).filter(validPath).length;
+    return `<div class="product-item">
+      <span class="card-badge ${m.badge}" style="flex-shrink:0">${m.short}</span>
+      <span class="product-item-name">${p.name}</span>
+      <span class="product-item-series">${p.part_number||''} · ${docCount} doc${docCount>1?'s':''}</span>
+      <div class="product-item-actions">
+        ${isCustom?`<button class="btn-edit" onclick="editProduct(${customIdx})">Éditer</button>
+        <button class="btn-danger" onclick="deleteProduct(${customIdx})">✕</button>`
+        :'<span style="font-size:0.65rem;color:var(--text-dim);font-family:'JetBrains Mono'">base</span>'}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── ADD/EDIT TAB ──
+function renderTabAdd(preset){
+  const p = preset || (editingIdx!==null ? customProducts[editingIdx] : null);
+  const isEdit = editingIdx !== null;
+  const v = k => p ? (p.docs[k]||'') : '';
+
+  const seriesOptions = [
+    'E-Vision Projectors','M-Vision Projectors','Titan Laser Projectors',
+    'Mirage Series','Satellite','Personnalisé'
+  ].map(s=>`<option value="${s}" ${p&&p.series===s?'selected':''}>${s}</option>`).join('');
+
+  document.getElementById('tabAdd').innerHTML = `
+    <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-bright);margin-bottom:1rem">
+      ${isEdit?'Modifier le produit':'Nouveau produit'}
+    </h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nom du modèle *</label>
+        <input id="fn" value="${p?p.name:''}" placeholder="E-Vision Laser 20000 WU">
+      </div>
+      <div class="form-group">
+        <label>Gamme *</label>
+        <select id="fs">${seriesOptions}</select>
+      </div>
+      <div class="form-group">
+        <label>Numéro de pièce</label>
+        <input id="fpn" value="${p?p.part_number||'':''}" placeholder="120-XXX">
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title"><span style="background:var(--green)"></span>Chemins réseau des documents</div>
+      <div class="form-grid">
+        ${Object.entries(DOC_META).map(([k,dm])=>`
+        <div class="form-group">
+          <label>${dm.icon} ${dm.label}</label>
+          <input id="fd_${k}" value="${v(k)}" placeholder="Z:\\OEM Product Documentation\\...">
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="switchTab('list',document.querySelectorAll('.ptab')[0]);editingIdx=null">Annuler</button>
+      <button class="btn-primary" onclick="saveProduct()">
+        ${isEdit?'Enregistrer les modifications':'Ajouter le produit'}
+      </button>
+    </div>`;
+}
+
+function editProduct(idx){
+  editingIdx = idx;
+  switchTab('add', document.querySelectorAll('.ptab')[1]);
+  renderTabAdd();
+}
+
+function saveProduct(){
+  const name = document.getElementById('fn').value.trim();
+  const series = document.getElementById('fs').value;
+  const pn = document.getElementById('fpn').value.trim();
+  if(!name){ toast('⚠ Nom du modèle requis'); return; }
+
+  const docs = {};
+  Object.keys(DOC_META).forEach(k=>{
+    const v = document.getElementById('fd_'+k).value.trim();
+    if(v) docs[k] = v;
+  });
+
+  const product = {name, series, part_number:pn, docs};
+
+  if(editingIdx !== null){
+    customProducts[editingIdx] = product;
+    toast('✓ Produit mis à jour');
+  } else {
+    customProducts.push(product);
+    toast('✓ Produit ajouté');
+  }
+  saveCustom();
+  editingIdx = null;
+  render();
+  switchTab('list', document.querySelectorAll('.ptab')[0]);
+}
+
+function deleteProduct(idx){
+  if(!confirm('Supprimer ce produit ?')) return;
+  customProducts.splice(idx,1);
+  saveCustom();
+  render();
+  renderTabList();
+  toast('Produit supprimé');
+}
+
+// ── IO TAB ──
+function renderTabIo(){
+  document.getElementById('tabIo').innerHTML = `
+    <div class="io-section">
+      <div class="io-title">📤 Exporter</div>
+      <div class="io-desc">Exporte tous les produits personnalisés en JSON. Partagez ce fichier avec vos collègues pour synchroniser la base.</div>
+      <button class="btn-io" onclick="exportJSON()">⬇ Télécharger export.json</button>
+    </div>
+    <div class="io-section" style="border-top:1px solid var(--border);padding-top:1.25rem;margin-top:0">
+      <div class="io-title">📥 Importer</div>
+      <div class="io-desc">Importe un fichier JSON exporté précédemment. Les produits existants seront remplacés.</div>
+      <div class="file-input-wrap">
+        <button class="btn-io">⬆ Choisir un fichier JSON</button>
+        <input type="file" accept=".json" onchange="importJSON(event)">
+      </div>
+    </div>
+    <div class="io-section" style="border-top:1px solid var(--border);padding-top:1.25rem;margin-top:0">
+      <div class="io-title" style="color:var(--accent)">⚠ Réinitialiser</div>
+      <div class="io-desc">Supprime tous les produits personnalisés et remet la base d'origine.</div>
+      <button class="btn-danger" onclick="resetCustom()">Effacer tous les produits personnalisés</button>
+    </div>`;
+}
+
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(customProducts,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download = 'dp_hub_produits.json'; a.click();
+}
+
+function importJSON(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!Array.isArray(data)) throw new Error('Format invalide');
+      customProducts = data;
+      saveCustom(); render();
+      toast(`✓ ${data.length} produit(s) importé(s)`);
+      renderTabIo();
+    } catch(err){ toast('⚠ Fichier invalide : '+err.message); }
+  };
+  reader.readAsText(file);
+}
+
+function resetCustom(){
+  if(!confirm('Supprimer tous les produits personnalisés ?')) return;
+  customProducts = []; saveCustom(); render(); renderTabList();
+  toast('Base réinitialisée');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+loadCustom();
+render();
+</script>
+</body>
+</html>
